@@ -3,8 +3,10 @@ package course.labs.todomanager;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,115 +18,126 @@ import android.widget.TextView;
 
 public class ToDoListAdapter extends BaseAdapter {
 
-	private final List<ToDoItem> mItems = new ArrayList<ToDoItem>();
-	private final Context mContext;
+    private final List<ToDoItem> mItems = new ArrayList<ToDoItem>();
+    private final Context mContext;
 
-	private static final String TAG = "Lab-UserInterface";
+    private static final String TAG = "Lab-UserInterface";
+    private LayoutInflater mInflater;
 
-	public ToDoListAdapter(Context context) {
 
-		mContext = context;
+    public ToDoListAdapter(Context context) {
 
-	}
+        mContext = context;
+        mInflater = LayoutInflater.from(context);
 
-	// Add a ToDoItem to the adapter
-	// Notify observers that the data set has changed
+    }
 
-	public void add(ToDoItem item) {
+    // Add a ToDoItem to the adapter
+    // Notify observers that the data set has changed
 
-		mItems.add(item);
-		notifyDataSetChanged();
+    public void add(ToDoItem item) {
 
-	}
+        mItems.add(item);
+        notifyDataSetChanged();
 
-	// Clears the list adapter of all items.
+    }
 
-	public void clear() {
+    // Clears the list adapter of all items.
 
-		mItems.clear();
-		notifyDataSetChanged();
+    public void clear() {
 
-	}
+        mItems.clear();
+        notifyDataSetChanged();
 
-	// Returns the number of ToDoItems
+    }
 
-	@Override
-	public int getCount() {
+    // Returns the number of ToDoItems
 
-		return mItems.size();
+    @Override
+    public int getCount() {
 
-	}
+        return mItems.size();
 
-	// Retrieve the number of ToDoItems
+    }
 
-	@Override
-	public Object getItem(int pos) {
+    // Retrieve the number of ToDoItems
 
-		return mItems.get(pos);
+    @Override
+    public Object getItem(int pos) {
 
-	}
+        return mItems.get(pos);
 
-	// Get the ID for the ToDoItem
-	// In this case it's just the position
+    }
 
-	@Override
-	public long getItemId(int pos) {
+    // Get the ID for the ToDoItem
+    // In this case it's just the position
 
-		return pos;
+    @Override
+    public long getItemId(int pos) {
 
-	}
+        return pos;
 
-	// Create a View for the ToDoItem at specified position
-	// Remember to check whether convertView holds an already allocated View
-	// before created a new View.
-	// Consider using the ViewHolder pattern to make scrolling more efficient
-	// See: http://developer.android.com/training/improving-layouts/smooth-scrolling.html
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+    }
 
-		// TODO - Get the current ToDoItem
-		final ToDoItem toDoItem = null;
+    // Create a View for the ToDoItem at specified position
+    // Remember to check whether convertView holds an already allocated View
+    // before created a new View.
+    // Consider using the ViewHolder pattern to make scrolling more efficient
+    // See: http://developer.android.com/training/improving-layouts/smooth-scrolling.html
 
-		// TODO - Inflate the View for this ToDoItem
-		// from todo_item.xml
-		RelativeLayout itemLayout = null;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Log.i(TAG, "Entered getView()" + position + "  " + convertView + "   " + parent);
 
-		// TODO - Fill in specific ToDoItem data
-		// Remember that the data that goes in this View
-		// corresponds to the user interface elements defined
-		// in the layout file
+        // DoneTODO - Get the current ToDoItem
+        final ToDoItem toDoItem = (ToDoItem) getItem(position);
 
-		// TODO - Display Title in TextView
-		final TextView titleView = null;
+        // DoneTODO - Inflate the View for this ToDoItem
+        // from todo_item.xml
+        RelativeLayout itemLayout = null;
+        convertView = mInflater.inflate(R.layout.todo_item, parent, false);
 
-		// TODO - Set up Status CheckBox
-		final CheckBox statusView = null;
+        // DoneTODO - Fill in specific ToDoItem data
+        // Remember that the data that goes in this View
+        // corresponds to the user interface elements defined
+        // in the layout file
 
-		statusView.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				Log.i(TAG, "Entered onCheckedChanged()");
+        // DoneTODO - Display Title in TextView
+        final TextView titleView = (TextView) convertView.findViewById(R.id.titleView);
+        titleView.setText(toDoItem.getTitle());
 
-				// TODO - set up an OnCheckedChangeListener, which
-				// is called when the user toggles the status checkbox
+        // DoneTODO - Set up Status CheckBox
+        final CheckBox statusView = (CheckBox) convertView.findViewById(R.id.statusCheckBox);
+        if (toDoItem.getStatus() == ToDoItem.Status.DONE) {
+            statusView.setChecked(true);
+        }
+        statusView.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+                Log.i(TAG, "Entered onCheckedChanged()");
 
-			}
-		});
+                // DoneTODO - set up an OnCheckedChangeListener, which
+                // is called when the user toggles the status checkbox
 
-		// TODO - Display Priority in a TextView
 
-		final TextView priorityView = null;
+            }
+        });
 
-		// TODO - Display Time and Date.
-		// Hint - use ToDoItem.FORMAT.format(toDoItem.getDate()) to get date and
-		// time String
+        // DoneTODO - Display Priority in a TextView
 
-		final TextView dateView = null;
+        final TextView priorityView = (TextView) convertView.findViewById(R.id.priorityView);
+        priorityView.setText(toDoItem.getPriority().toString());
 
-		// Return the View you just created
-		return itemLayout;
+        // DoneTODO - Display Time and Date.
+        // Hint - use ToDoItem.FORMAT.format(toDoItem.getDate()) to get date and
+        // time String
 
-	}
+        final TextView dateView = (TextView) convertView.findViewById(R.id.dateView);
+        dateView.setText(ToDoItem.FORMAT.format(toDoItem.getDate()));
+
+        // Return the View you just created
+//        return itemLayout;
+        return convertView;
+    }
 }

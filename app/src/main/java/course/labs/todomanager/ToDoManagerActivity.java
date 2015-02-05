@@ -10,10 +10,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import course.labs.todomanager.ToDoItem.Priority;
@@ -51,15 +47,15 @@ public class ToDoManagerActivity extends ListActivity {
         // Put divider between ToDoItems and FooterView
         getListView().setFooterDividersEnabled(true);
 
-        // Inflate footerView for footer_view.xml file
+        // DoneTODO - Inflate footerView for footer_view.xml file
 
-        TextView footerView = (TextView) View.inflate(this, R.layout.footer_view, null);
+        TextView footerView = (TextView) getLayoutInflater().inflate(R.layout.footer_view, null);
 
-        // NOTE: You can remove this block once you've implemented the assignment
-        if (null == footerView) {
-            return;
-        }
-        // Add footerView to ListView
+        // New DoneTODO NOTE: You can remove this block once you've implemented the assignment
+//		if (null == footerView) {
+//			return;
+//		}
+        // DoneTODO - Add footerView to ListView
         getListView().addFooterView(footerView);
 
 
@@ -69,17 +65,14 @@ public class ToDoManagerActivity extends ListActivity {
 
                 Log.i(TAG, "Entered footerView.OnClickListener.onClick()");
 
-                // DONE Implement OnClick().
-                Intent intent = new Intent(ToDoManagerActivity.this, AddToDoActivity.class);
-                startActivityForResult(intent, ADD_TODO_ITEM_REQUEST);
+                //DoneTODO - Implement OnClick().
+                Intent addToDoIntent = new Intent(ToDoManagerActivity.this, AddToDoActivity.class);
+                startActivityForResult(addToDoIntent, ADD_TODO_ITEM_REQUEST);
             }
         });
 
-        // DONE - Attach the adapter to this ListActivity's ListView
-
-        ListAdapter listAdapter;
-        listAdapter = new ToDoListAdapter(this);
-        setListAdapter(listAdapter);
+        // DoneTODO - Attach the adapter to this ListActivity's ListView
+        getListView().setAdapter(mAdapter);
 
     }
 
@@ -88,31 +81,14 @@ public class ToDoManagerActivity extends ListActivity {
 
         Log.i(TAG, "Entered onActivityResult()");
 
-        // DONE - Check result code and request code
+        // DoneTODO - Check result code and request code
         // if user submitted a new ToDoItem
         // Create a new ToDoItem from the data Intent
         // and then add it to the adapter
-
-        switch (requestCode) {
-            case ADD_TODO_ITEM_REQUEST: {
-                if (resultCode == Activity.RESULT_OK) {
-
-                    String fullDate = data.getStringExtra(ToDoItem.DATE);
-                    Date date = null;
-                    try {
-                        date = new SimpleDateFormat("yyyy-mm-dd HH:mm:SS").parse(fullDate);
-                    } catch (ParseException e) {
-                        Log.i(TAG, "Parsing Error inside onActivityResult()");
-                        e.printStackTrace();
-                    }
-
-                  mAdapter.add(new ToDoItem
-                            (data.getStringExtra(ToDoItem.TITLE),
-                                   Priority.valueOf(data.getStringExtra(ToDoItem.PRIORITY)),
-                                   Status.valueOf(data.getStringExtra(ToDoItem.STATUS)),
-                                    date));
-
-                }
+        if (requestCode == ADD_TODO_ITEM_REQUEST){
+            if (resultCode == RESULT_OK){
+                // use ToDoItem(Intent intent)
+                mAdapter.add(new ToDoItem(data));
             }
         }
 
